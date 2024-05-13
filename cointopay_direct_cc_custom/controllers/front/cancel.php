@@ -26,7 +26,6 @@
 if (!defined('_PS_VERSION_')) {
     exit;
 }
-use Cointopay_Direct_Cc_Custom\Merchant\Order;
 
 require_once _PS_MODULE_DIR_ . '/cointopay_direct_cc_custom/vendor/cointopay/init.php';
 require_once _PS_MODULE_DIR_ . '/cointopay_direct_cc_custom/vendor/version.php';
@@ -66,7 +65,7 @@ class Cointopay_Direct_Cc_CustomCancelModuleFrontController extends ModuleFrontC
             ];
 
             Cointopay_Direct_Cc_Custom\Cointopay_Direct_Cc_Custom::config($ctpConfig);
-            $response_ctp = Order::ValidateOrder([
+            $response_ctp = Cointopay_Direct_Cc_Custom\Merchant\Order::ValidateOrder([
                 'TransactionID' => $TransactionID,
                 'ConfirmCode' => $ConfirmCode,
             ]);

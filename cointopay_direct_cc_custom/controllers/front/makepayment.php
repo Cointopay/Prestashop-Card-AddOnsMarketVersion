@@ -27,9 +27,6 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-/* @since 1.5.0 */
-use Cointopay_Direct_Cc_Custom\Merchant\Order;
-
 require_once _PS_MODULE_DIR_ . '/cointopay_direct_cc_custom/vendor/cointopay/init.php';
 require_once _PS_MODULE_DIR_ . '/cointopay_direct_cc_custom/vendor/version.php';
 
@@ -60,7 +57,7 @@ class Cointopay_Direct_Cc_CustomMakepaymentModuleFrontController extends ModuleF
         ];
 
         Cointopay_Direct_Cc_Custom\Cointopay_Direct_Cc_Custom::config($ctpConfig);
-        $order = Order::createOrFail([
+        $order = Cointopay_Direct_Cc_Custom\Merchant\Order::createOrFail([
             'order_id' => implode('----', [Tools::getValue('id_order'), $internal_order_id]),
             'price' => $total,
             'currency' => Tools::getValue('isocode'),
