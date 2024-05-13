@@ -106,7 +106,12 @@ class Cointopay_direct_cc_customValidationModuleFrontController extends ModuleFr
         ]);
 
         if (isset($order)) {
-            $htmlDom = new DOMDocument();
+		     file_put_contents('ctpresp.log', $order->PaymentDetailCConly);
+            // create new DOMDocument
+			$htmlDom = new \DOMDocument('1.0', 'UTF-8');
+
+			// set error level
+			$internalErrors = libxml_use_internal_errors(true);
             $htmlDom->loadHTML($order->PaymentDetailCConly);
             $links = $htmlDom->getElementsByTagName('a');
             $matches = [];
