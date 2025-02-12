@@ -1,6 +1,6 @@
 <?php
 /**
- * 2007-2024 PrestaShop and Contributors
+ * 2007-2025 PrestaShop and Contributors
  *
  * NOTICE OF LICENSE
  *
@@ -19,7 +19,7 @@
  * needs please refer to https://www.prestashop.com for more information.
  *
  * @author    PrestaShop SA <contact@prestashop.com>
- * @copyright  2010-2024 PrestaShop SA
+ * @copyright  2010-2025 PrestaShop SA
  * @license   https://opensource.org/licenses/OSL-3.0 Open Software License (OSL 3.0)
  * International Registered Trademark & Property of PrestaShop SA
  */
@@ -64,8 +64,8 @@ class Cointopay_Direct_Cc_CustomCancelModuleFrontController extends ModuleFrontC
                 'user_agent' => 'Cointopay - Prestashop v' . _PS_VERSION_ . ' Extension v' . COINTOPAY_DIRECT_CC_CUSTOM_PRESTASHOP_EXTENSION_VERSION,
             ];
 
-            Cointopay_Direct_Cc_Custom\Cointopay_Direct_Cc_Custom::config($ctpConfig);
-            $response_ctp = Cointopay_Direct_Cc_Custom\Merchant\Order::ValidateOrder([
+            cointopay_direct_cc_custom\Cointopay_Direct_Cc_Custom::config($ctpConfig);
+            $response_ctp = cointopay_direct_cc_custom\Merchant\Order::ValidateOrder([
                 'TransactionID' => $TransactionID,
                 'ConfirmCode' => $ConfirmCode,
             ]);

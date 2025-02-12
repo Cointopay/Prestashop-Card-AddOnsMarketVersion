@@ -1,6 +1,6 @@
 <?php
 /**
- * 2010-2024 PrestaShop
+ * 2010-2025 PrestaShop
  *
  * NOTICE OF LICENSE
  *
@@ -47,13 +47,14 @@ class Cointopay_Direct_Cc_Custom extends PaymentModule
         $this->name = 'cointopay_direct_cc_custom';
         $this->tab = 'payments_gateways';
         $this->version = '1.0.0';
-        $this->ps_versions_compliancy = ['min' => '1.7', 'max' => _PS_VERSION_];
+        $this->ps_versions_compliancy = [
+            'min' => '1.7',
+            'max' => _PS_VERSION_,
+        ];
         $this->author = 'Cointopay.com';
         $this->is_eu_compatible = 1;
-
         $this->currencies = true;
         $this->currencies_mode = 'checkbox';
-
         $this->bootstrap = true;
 
         $config = Configuration::getMultiple([
@@ -131,7 +132,6 @@ class Cointopay_Direct_Cc_Custom extends PaymentModule
         if (_PS_VERSION_ >= '1.7.7') {
             if (
                 !parent::install()
-                || !$this->registerHook('paymentReturn')
                 || !$this->registerHook('paymentOptions')
                 || !$this->registerHook('DisplayAdminOrder')
             ) {
@@ -140,10 +140,7 @@ class Cointopay_Direct_Cc_Custom extends PaymentModule
         } else {
             if (
                 !parent::install()
-                || !$this->registerHook('displayPaymentEU')
-                || !$this->registerHook('paymentReturn')
                 || !$this->registerHook('paymentOptions')
-                || !$this->registerHook('orderConfirmation')
                 || !$this->registerHook('DisplayAdminOrderLeft')
             ) {
                 return false;
@@ -224,9 +221,9 @@ class Cointopay_Direct_Cc_Custom extends PaymentModule
                         . ' Extension v' . COINTOPAY_DIRECT_CC_CUSTOM_PRESTASHOP_EXTENSION_VERSION,
                 ];
 
-                Cointopay_Direct_Cc_Custom\Cointopay_Direct_Cc_Custom::config($ctpConfig);
+                \cointopay_direct_cc_custom\Cointopay_Direct_Cc_Custom::config($ctpConfig);
 
-                $merchant = Cointopay_Direct_Cc_Custom\Cointopay_Direct_Cc_Custom::verifyMerchant();
+                $merchant = \cointopay_direct_cc_custom\Cointopay_Direct_Cc_Custom::verifyMerchant();
 
                 if ($merchant !== true) {
                     $this->postErrors[] = $this->l($merchant);
@@ -327,7 +324,7 @@ class Cointopay_Direct_Cc_Custom extends PaymentModule
     protected function getConfigFormValues()
     {
         $system_name = Configuration::get('COINTOPAY_DIRECT_CC_CUSTOM_DISPLAY_NAME');
-        $display_name = (isset($system_name) && !empty($system_name)) ? $system_name : 'Pay via Visa / Mastercard';
+        $display_name = !empty($system_name) ? $system_name : 'Pay via Visa / Mastercard';
 
         return [
             'COINTOPAY_DIRECT_CC_CUSTOM_DISPLAY_NAME' => $display_name,
@@ -375,19 +372,17 @@ class Cointopay_Direct_Cc_Custom extends PaymentModule
         return false;
     }
 
-    public function hookPaymentReturn($params)
+    public function hookActionPaymentReturn($params)
     {
-        /* Verify if this module is enabled */
         if (!$this->active) {
             return;
         }
-        $this->context->controller->addJS($this->_path . '/views/js/cointopay_custom.js', 'all');
 
-        array_push($params, $_REQUEST);
+        $this->context->controller->addJS($this->_path . 'views/js/cointopay_custom.js');
 
         if (isset($_REQUEST['CustomerReferenceNr'])) {
-            $this->smarty->assign('getparams', $_REQUEST);
-            return $this->context->smarty->fetch('module:cointopay_direct_cc_custom/views/templates/hook/ctp_success_callback.tpl');
+            $this->context->smarty->assign('getparams', $_REQUEST);
+            return $this->fetch('module:cointopay_direct_cc_custom/views/templates/hook/ctp_success_callback.tpl');
         }
     }
 

@@ -1,6 +1,6 @@
 <?php
 /**
- * 2007-2024 PrestaShop
+ * 2007-2025 PrestaShop
  *
  * NOTICE OF LICENSE
  *
@@ -19,14 +19,20 @@
  * needs please refer to http://www.prestashop.com for more information.
  *
  * @author PrestaShop SA <contact@prestashop.com>
- * @copyright  2007-2024 PrestaShop SA
+ * @copyright  2007-2025 PrestaShop SA
  * @license    http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
+ *
  * International Registered Trademark & Property of PrestaShop SA
  */
+
+use PrestaShop\PrestaShop\Core\Configuration\Configuration;
+use PrestaShop\PrestaShop\Core\Utility\Tools;
+
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
+require_once _PS_ROOT_DIR_ . '/config/config.inc.php';
 require_once _PS_MODULE_DIR_ . '/cointopay_direct_cc_custom/vendor/cointopay/init.php';
 require_once _PS_MODULE_DIR_ . '/cointopay_direct_cc_custom/vendor/version.php';
 
@@ -47,7 +53,7 @@ class Cointopay_Direct_Cc_CustomMakepaymentModuleFrontController extends ModuleF
         $merchant_id = Configuration::get('COINTOPAY_DIRECT_CC_CUSTOM_MERCHANT_ID');
         $security_code = Configuration::get('COINTOPAY_DIRECT_CC_CUSTOM_SECURITY_CODE');
         $user_currency = Configuration::get('COINTOPAY_DIRECT_CC_CUSTOM_CRYPTO_CURRENCY');
-        $selected_currency = (isset($user_currency) && !empty($user_currency)) ? $user_currency : 1;
+        $selected_currency = !empty($user_currency) ? $user_currency : 1;
         $total = (float) Tools::getValue('amount');
         $ctpConfig = [
             'merchant_id' => $merchant_id,
@@ -56,8 +62,8 @@ class Cointopay_Direct_Cc_CustomMakepaymentModuleFrontController extends ModuleF
             'user_agent' => 'Cointopay - Prestashop v' . _PS_VERSION_ . ' Extension v' . COINTOPAY_DIRECT_CC_CUSTOM_PRESTASHOP_EXTENSION_VERSION,
         ];
 
-        Cointopay_Direct_Cc_Custom\Cointopay_Direct_Cc_Custom::config($ctpConfig);
-        $order = Cointopay_Direct_Cc_Custom\Merchant\Order::createOrFail([
+        cointopay_direct_cc_custom\Cointopay_Direct_Cc_Custom::config($ctpConfig);
+        $order = cointopay_direct_cc_custom\Merchant\Order::createOrFail([
             'order_id' => implode('----', [Tools::getValue('id_order'), $internal_order_id]),
             'price' => $total,
             'currency' => Tools::getValue('isocode'),

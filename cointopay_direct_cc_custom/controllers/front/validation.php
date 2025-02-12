@@ -1,6 +1,6 @@
 <?php
 /**
- * 2007-2024 PrestaShop
+ * 2007-2025 PrestaShop
  *
  * NOTICE OF LICENSE
  *
@@ -19,7 +19,7 @@
  * needs please refer to http://www.prestashop.com for more information.
  *
  * @author PrestaShop SA <contact@prestashop.com>
- * @copyright  2007-2024 PrestaShop SA
+ * @copyright  2007-2025 PrestaShop SA
  * @license    http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  * International Registered Trademark & Property of PrestaShop SA
  */
@@ -83,7 +83,7 @@ class Cointopay_direct_cc_customValidationModuleFrontController extends ModuleFr
         $merchant_id = Configuration::get('COINTOPAY_DIRECT_CC_CUSTOM_MERCHANT_ID');
         $security_code = Configuration::get('COINTOPAY_DIRECT_CC_CUSTOM_SECURITY_CODE');
         $user_currency = Configuration::get('COINTOPAY_DIRECT_CC_CUSTOM_CRYPTO_CURRENCY');
-        $selected_currency = (isset($user_currency) && !empty($user_currency)) ? $user_currency : 1;
+        $selected_currency = !empty($user_currency) ? $user_currency : 1;
         $ctpConfig = [
             'merchant_id' => $merchant_id,
             'security_code' => $security_code,
@@ -92,8 +92,8 @@ class Cointopay_direct_cc_customValidationModuleFrontController extends ModuleFr
         ];
         $orderObj = new Order($this->module->currentOrder);
 
-        Cointopay_Direct_Cc_Custom\Cointopay_Direct_Cc_Custom::config($ctpConfig);
-        $order = Cointopay_Direct_Cc_Custom\Merchant\Order::createOrFail([
+        cointopay_direct_cc_custom\Cointopay_Direct_Cc_Custom::config($ctpConfig);
+        $order = cointopay_direct_cc_custom\Merchant\Order::createOrFail([
             'order_id' => implode('----', [$orderObj->reference, $this->module->currentOrder]),
             'price' => $total,
             'currency' => $this->currencyCode($currency->iso_code),
@@ -106,12 +106,13 @@ class Cointopay_direct_cc_customValidationModuleFrontController extends ModuleFr
         ]);
 
         if (isset($order)) {
-		     file_put_contents('ctpresp.log', $order->PaymentDetailCConly);
-            // create new DOMDocument
-			$htmlDom = new \DOMDocument('1.0', 'UTF-8');
+            file_put_contents('ctpresp.log', $order->PaymentDetailCConly);
 
-			// set error level
-			$internalErrors = libxml_use_internal_errors(true);
+            // create new DOMDocument
+            $htmlDom = new \DOMDocument('1.0', 'UTF-8');
+
+            // set error level
+            $internalErrors = libxml_use_internal_errors(true);
             $htmlDom->loadHTML($order->PaymentDetailCConly);
             $links = $htmlDom->getElementsByTagName('a');
             $matches = [];
